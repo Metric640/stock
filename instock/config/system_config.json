@@ -1,0 +1,42 @@
+{
+  "proxy": {
+    "authKey": "",
+    "password": "",
+    "poolSize": 5,
+    "timeout": 10,
+    "cacheTime": 24
+  },
+  "ai": {
+    "apiKey": "",
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "gpt-5",
+    "temperature": 0.7,
+    "maxTokens": 2000
+  },
+  "data_source": {
+    "tushareToken": "",
+    "refreshInterval": 60,
+    "retentionDays": 365,
+    "maxConcurrentRequests": 5,
+    "requestTimeout": 30
+  },
+  "job_schedules": {
+    "execute_daily_job": [
+      {
+        "cron": "31 9 * * *",
+        "enabled": true,
+        "description": "上午9:31"
+      },
+      {
+        "cron": "31 11 * * *",
+        "enabled": true,
+        "description": "上午11:31"
+      },
+      {
+        "cron": "1 15 * * *",
+        "enabled": true,
+        "description": "下午15:01"
+      }
+    ]
+  }
+}

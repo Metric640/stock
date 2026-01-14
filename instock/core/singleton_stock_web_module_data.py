@@ -1,6 +1,11 @@
 #!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 
+from instock.lib.simple_logger import get_logger
+
+# 获取logger
+logger = get_logger(__name__)
+
 import instock.core.tablestructure as tbs
 from instock.lib.singleton_type import singleton_type
 import instock.core.web_module_data as wmd
@@ -14,7 +19,7 @@ class stock_web_module_data(metaclass=singleton_type):
         _data = {}
         self.data_list = [wmd.web_module_data(
             mode="query",
-            type="综合选股",
+            type="AI综合选股",
             ico="fa fa-desktop",
             name=tbs.TABLE_CN_STOCK_SELECTION['cn'],
             table_name=tbs.TABLE_CN_STOCK_SELECTION['name'],
@@ -24,6 +29,17 @@ class stock_web_module_data(metaclass=singleton_type):
             is_realtime=False,
             order_columns=f"(SELECT `datetime` FROM `{tbs.TABLE_CN_STOCK_ATTENTION['name']}` WHERE `code`=`{tbs.TABLE_CN_STOCK_SELECTION['name']}`.`code`) AS `cdatetime`",
             order_by=" `date` DESC"
+        ), wmd.web_module_data(
+            mode="page",
+            type="AI综合选股",
+            ico="fa fa-robot",
+            name="AI综合分析",
+            table_name="ai_analysis",
+            columns=(),
+            column_names=(),
+            primary_key=[],
+            is_realtime=False,
+            url="/instock/ai_analysis"
         ), wmd.web_module_data(
             mode="query",
             type="股票基本数据",
@@ -211,7 +227,57 @@ class stock_web_module_data(metaclass=singleton_type):
             is_realtime=False,
             order_columns=f"(SELECT `datetime` FROM `{tbs.TABLE_CN_STOCK_ATTENTION['name']}` WHERE `code`=`{tbs.TABLE_CN_STOCK_KLINE_PATTERN['name']}`.`code`) AS `cdatetime`",
             order_by=" code"
-        ), wmd.web_module_data(
+        )]
+        
+        # 添加系统配置页面到菜单
+        self.data_list.append(
+            wmd.web_module_data(
+                mode="page",
+                type="系统配置", 
+                ico="fa fa-download",
+                name="数据下载",
+                table_name="data_download",
+                columns=(),
+                column_names=(),
+                primary_key=[],
+                is_realtime=False,
+                url="/instock/data_download"
+            )
+        )
+        
+        # 添加代理&数据源配置页面到菜单
+        self.data_list.append(
+            wmd.web_module_data(
+                mode="page",
+                type="系统配置",
+                ico="fa fa-cogs",
+                name="代理&数据源配置",
+                table_name="proxy_config",
+                columns=(),
+                column_names=(),
+                primary_key=[],
+                is_realtime=False,
+                url="/instock/proxy_config"
+            )
+        )
+
+        # 添加定时任务管理页面到菜单
+        self.data_list.append(
+            wmd.web_module_data(
+                mode="page",
+                type="系统配置",
+                ico="fa fa-clock-o",
+                name="定时任务管理",
+                table_name="schedule_config",
+                columns=(),
+                column_names=(),
+                primary_key=[],
+                is_realtime=False,
+                url="/instock/schedule_config"
+            )
+        )
+        self.data_list.append(
+            wmd.web_module_data(
             mode="query",
             type="股票策略数据",
             ico="fa fa-check-square-o",
@@ -223,24 +289,8 @@ class stock_web_module_data(metaclass=singleton_type):
             is_realtime=False,
             order_columns=f"(SELECT `datetime` FROM `{tbs.TABLE_CN_STOCK_ATTENTION['name']}` WHERE `code`=`{tbs.TABLE_CN_STOCK_SPOT_BUY['name']}`.`code`) AS `cdatetime`",
             order_by=" code"
-        )]
-        
-        # 添加数据下载页面到菜单
-        self.data_list.append(
-            wmd.web_module_data(
-                mode="page",
-                type="数据管理", 
-                ico="fa fa-download",
-                name="数据下载",
-                table_name="data_download",
-                columns=(),
-                column_names=(),
-                primary_key=[],
-                is_realtime=False,
-                url="/instock/data_download"
-            )
         )
-
+        )
         for table in tbs.TABLE_CN_STOCK_STRATEGIES:
             self.data_list.append(
                 wmd.web_module_data(
@@ -257,6 +307,7 @@ class stock_web_module_data(metaclass=singleton_type):
                     order_by=" code"
                 )
             )
+
         for tmp in self.data_list:
             _data[tmp.table_name] = tmp
         self.data = _data
